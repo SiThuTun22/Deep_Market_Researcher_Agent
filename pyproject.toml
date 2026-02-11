@@ -1,0 +1,18 @@
+[project]
+name = "deep-market-researcher"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "advanced-alchemy>=1.8.2",
+    "asyncpg>=0.31.0",
+    "autogen-agentchat>=0.7.5",
+    "autogen-ext[groq,openai]>=0.7.5",
+    "duckduckgo-search>=8.1.1",
+    "litestar[standard]>=2.20.0",
+    "psycopg[binary]>=3.3.2",
+    "pyautogen>=0.10.0",
+    "python-dotenv>=1.2.1",
+    "sqlalchemy[asyncio]>=2.0.46",
+]
