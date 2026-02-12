@@ -67,7 +67,7 @@ researcher = AssistantAgent(
     name="researcher",
     model_client=model_client,
     tools=[web_search],
-    reflect_on_tool_use=False,
+    reflect_on_tool_use=True,
     system_message=(
         "You are an expert Market Research Specialist.\n\n"
         "1. use the 'web_search' tool to get data.\n"
