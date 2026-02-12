@@ -69,20 +69,20 @@ researcher = AssistantAgent(
     tools=[web_search],
     reflect_on_tool_use=True,
     system_message=(
-        "You are an expert Market Research Specialist.\n\n"
-        "1. use the 'web_search' tool to get data.\n"
-        "2. If results are empty, broaden your query and try again immediately.\n"
-        "3. You must attempt at least 3 distinct search variations before giving up.\n\n"
-        "After gathering data, provide a concise bulleted synthesis with source URLs.\n"
-        "After providing your bulleted research and source URLs, you MUST "
-        "write the word 'TERMINATE' and stop. "
-        "DO NOT ask follow-up questions. DO NOT offer further help. "
-        "DO NOT repeat yourself."
-        "IMPORTANT: Simply use the tool. Do not explain your steps or use XML tags.\n"
-        "IMPORTANT: DO NOT use <function> or </function> tags." 
+        "Search for deep market data. Provide facts with URLs. Say 'DONE' when you have 5+ sources."
     )
 )
+reviewer = AssistantAgent(
+    name="reviewer",
+    model_client=model_client,
+    system_message="Verify the researcher's findings. Check if URLs are present. If it's too vague, ask for more detail. if good, say 'VERIFIED'."
+)
 
+synthesizer = AssistantAgent(
+    name="synthesizer",
+    model_client=model_client,
+    system_message="Convert the verified research into a professional summary. End with 'TERMINATE'."
+)
 termination = TextMentionTermination("TERMINATE")
-research_team = RoundRobinGroupChat([researcher],termination_condition=termination)
+research_team = RoundRobinGroupChat([researcher,reviewer,synthesizer],termination_condition=termination)
 
