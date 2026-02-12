@@ -34,14 +34,15 @@ async def handle_research(data: DTOData[ResearchReport],reports_repo: ResearchRe
             content_str = m.content
         elif isinstance(m.content, list):
             content_str = " ".join([str(i) for i in m.content])
-        
+
+        if "TERMINATE" in content_str and m.source == "synthesizer":
+            final_text_summary = content_str.replace("TERMINATE", "").strip()
+
         history.append({
             "role":m.source,
-            "content":content_str.replace("TERMINATE","").strip() or "[Tool/System Action]"
+            "content":content_str.strip() or "[System Action]"
         })
 
-        if "TERMINATE" in content_str and m.source == "researcher":
-            final_text_summary = content_str.replace("TERMINATE", "").strip()
         
     if not final_text_summary:
         final_text_summary = "Research completed. See raw logs for details."

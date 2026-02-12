@@ -69,19 +69,32 @@ researcher = AssistantAgent(
     tools=[web_search],
     reflect_on_tool_use=True,
     system_message=(
-        "Search for deep market data. Provide facts with URLs. Say 'DONE' when you have 5+ sources."
+        "you are a market researcher"
+        "Use the 'web_search' tool to find data."
+        "always include the source urls in your findings."
+        "Format: [Fact] - [URL]."
+        "Do not say 'Done' until you have provided at least 3 URLs."
     )
 )
 reviewer = AssistantAgent(
     name="reviewer",
     model_client=model_client,
-    system_message="Verify the researcher's findings. Check if URLs are present. If it's too vague, ask for more detail. if good, say 'VERIFIED'."
+    system_message=(
+        "Verify the researcher's findings. Check if URLs are present."
+        "If URLs are missing, tell the researcher: 'REDO: Missing URLs'."
+        "If URLs are present and data is solid, say 'VERIFIED'."
+        )
+
 )
 
 synthesizer = AssistantAgent(
     name="synthesizer",
     model_client=model_client,
-    system_message="Convert the verified research into a professional summary. End with 'TERMINATE'."
+    system_message=(
+        "Create a professional market report using the verified data."
+        "Include a 'Sources' section at the end listing all URLs."
+        "End your message with the word: TERMINATE"
+    )
 )
 termination = TextMentionTermination("TERMINATE")
 research_team = RoundRobinGroupChat([researcher,reviewer,synthesizer],termination_condition=termination)
