@@ -17,7 +17,7 @@ from sqlalchemy import select
 
 
 @post("/research",dto=ResearchReportCreateDTO,return_dto=ResearchReportDTO)
-async def handle_research(data: DTOData[ResearchReport],reports_repo: ResearchReportRepo) -> ResearchReport:
+async def handle_research(data: DTOData[ResearchReport],reports_repo: ResearchReportRepo,db_session: AsyncSession) -> ResearchReport:
 
     topic_dict = data.as_builtins()
     topic_text = topic_dict.get("topic")
@@ -33,7 +33,7 @@ async def handle_research(data: DTOData[ResearchReport],reports_repo: ResearchRe
         if isinstance(m.content, str):
             content_str = m.content
         elif isinstance(m.content, list):
-            content = " ".join([str(i) for i in m.content])
+            content_str = " ".join([str(i) for i in m.content])
         
         history.append({
             "role":m.source,
@@ -52,6 +52,7 @@ async def handle_research(data: DTOData[ResearchReport],reports_repo: ResearchRe
     )
 
     created_report = await reports_repo.add(report_instance)
+    await db_session.commit()
     return created_report
 
 @get("/research",return_dto=ResearchReportDTO)
